@@ -1,0 +1,121 @@
+NAME
+    ElasticSearch::Transport::AEHTTP - AnyEvent::HTTP backend for
+    ElasticSearch
+
+VERSION
+    version 0.01
+
+SYNOPSIS
+        use ElasticSearch;
+        my $e = ElasticSearch->new(
+            servers     => 'search.foo.com:9200',
+            transport   => 'aehttp',
+        );
+
+        # blocking request
+        $e->cluster_health->recv;
+
+        # non-blocking request
+        $e->cluster_health->cb( sub {
+            if ($@) {
+                log "An error occurred: $@";
+            } else {
+                my $response = shift;
+                log $response;
+            }
+        });
+        AE::cv->recv();
+
+        # fire-and-forget vs scoped
+        {
+            $e->delete_index(index => 'foo');
+            $e->delete_index(index => 'bar')->cb( sub { print "Done"});
+            my $cv = $e->delete_index(index=>'baz');
+        }
+        AE::cv->recv;
+        #   - foo and bar will be deleted
+        #   - baz will not be deleted
+
+DESCRIPTION
+    ElasticSearch::Transport::AEHTTP uses AnyEvent::HTTP to talk to
+    ElasticSearch asynchronously over HTTP.
+
+USING AEHTTP
+    Any request to ElasticSearch returns an AnyEvent::CondVar. You have
+    three options for how you use them:
+
+  Blocking
+        $cv = $e->cluster_health;
+        $result = $cv->recv;
+
+    When you call "recv()" on a CondVar, your program will block until that
+    CondVar is ready to return a value.
+
+    If an error was thrown, then "recv()" will "die". You will need to wrap
+    "recv()" in "eval" if you don't want to die.
+
+    If your $cv goes out of scope, then the request will be aborted.
+
+  Callback
+        $e->cluster_health->cb( sub {
+            if ($@) {
+                log "Error $@";
+            }
+            else {
+                my $result = shift;
+                log "$result"
+            }
+        })
+        AE::cv->recv()
+
+    If you set a callback on a CondVar, then the callback will be called
+    once the CondVar is ready (which will only happen after you start the
+    event loop).
+
+    In the callback, $@ will contain any error, otherwise the result (if
+    any) will be the first value in @_.
+
+    Once you set a callback on a CondVar, it will not be aborted when it
+    goes out of scope.
+
+  Fire-and-Forget
+        $e->delete_index(index=>'foo');
+
+    If a request is called in "void" context, then it will be executed once
+    the event loop is started. No errors will be thrown, even if the request
+    does not complete succesfully.
+
+    It will not be aborted with a change in scope, because there is no
+    scope. If you exit the application without running an event loop, then
+    any pending requests will not be run.
+
+BLOCKING METHODS
+    "scrolled_search()" in ElasticSearch and "reindex()" in ElasticSearch
+    will be executed synchronously.
+
+SEE ALSO
+    *   ElasticSearch
+
+    *   ElasticSearch::Transport
+
+    *   ElasticSearch::Transport::HTTPLite
+
+    *   ElasticSearch::Transport::HTTPTiny
+
+    *   ElasticSearch::Transport::Curl
+
+    *   ElasticSearch::Transport::AEHTTP
+
+    *   ElasticSearch::Transport::Thrift
+
+    1;
+
+AUTHOR
+    Clinton Gormley <drtech@cpan.org>
+
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2011 by Clinton Gormley.
+
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
+

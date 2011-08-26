@@ -1,0 +1,61 @@
+{
+   "abstract" : "AnyEvent::HTTP backend for ElasticSearch",
+   "author" : [
+      "Clinton Gormley <drtech@cpan.org>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Dist::Zilla version 4.300000, CPAN::Meta::Converter version 2.110930",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "ElasticSearch-Transport-AEHTTP",
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Module::Build" : "0.3601"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "Module::Build" : "0.3601"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "AnyEvent" : 0,
+            "AnyEvent::HTTP" : 0,
+            "ElasticSearch" : "0.41",
+            "ElasticSearch::Transport" : 0,
+            "ElasticSearch::Util" : 0,
+            "Encode" : 0,
+            "Scalar::Util" : 0,
+            "base" : 0,
+            "strict" : 0,
+            "warnings" : 0
+         }
+      },
+      "test" : {
+         "requires" : {
+            "Test::More" : 0
+         }
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/clintongormley/ElasticSearch-AEHTTP/issues"
+      },
+      "homepage" : "https://metacpan.org/module/ElasticSearch",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/clintongormley/ElasticSearch-AEHTTP.git",
+         "web" : "https://github.com/clintongormley/ElasticSearch-AEHTTP"
+      }
+   },
+   "version" : "0.01"
+}
+
