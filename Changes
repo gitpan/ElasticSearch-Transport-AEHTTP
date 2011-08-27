@@ -1,4 +1,9 @@
 Revision history for ElasticSearch-Transport-AEHTTP
+0.02    2011-08-27
+        Added support for deflate()
+        Fixed a bug that was causing ElasticSearch::Transport::AECurl to not
+        release all of its requests on DESTROY
+
 0.01    2011-08-26
 
         First release

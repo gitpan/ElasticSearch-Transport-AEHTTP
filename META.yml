@@ -17,16 +17,16 @@ name: ElasticSearch-Transport-AEHTTP
 requires:
   AnyEvent: 0
   AnyEvent::HTTP: 0
-  ElasticSearch: 0.41
+  ElasticSearch: 0.44
   ElasticSearch::Transport: 0
   ElasticSearch::Util: 0
   Encode: 0
   Scalar::Util: 0
-  base: 0
+  parent: 0
   strict: 0
   warnings: 0
 resources:
   bugtracker: https://github.com/clintongormley/ElasticSearch-AEHTTP/issues
   homepage: https://metacpan.org/module/ElasticSearch
   repository: git://github.com/clintongormley/ElasticSearch-AEHTTP.git
-version: 0.01
+version: 0.02

@@ -3,7 +3,7 @@ NAME
     ElasticSearch
 
 VERSION
-    version 0.01
+    version 0.02
 
 SYNOPSIS
         use ElasticSearch;
@@ -105,6 +105,8 @@ SEE ALSO
     *   ElasticSearch::Transport::Curl
 
     *   ElasticSearch::Transport::AEHTTP
+
+    *   ElasticSearch::Transport::AECurl
 
     *   ElasticSearch::Transport::Thrift
 

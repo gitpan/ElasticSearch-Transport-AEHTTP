@@ -18,7 +18,7 @@ my %module_build_args = (
     "Clinton Gormley <drtech\@cpan.org>"
   ],
   "dist_name" => "ElasticSearch-Transport-AEHTTP",
-  "dist_version" => "0.01",
+  "dist_version" => "0.02",
   "license" => "perl",
   "module_name" => "ElasticSearch::Transport::AEHTTP",
   "recommends" => {},
@@ -26,12 +26,12 @@ my %module_build_args = (
   "requires" => {
     "AnyEvent" => 0,
     "AnyEvent::HTTP" => 0,
-    "ElasticSearch" => "0.41",
+    "ElasticSearch" => "0.44",
     "ElasticSearch::Transport" => 0,
     "ElasticSearch::Util" => 0,
     "Encode" => 0,
     "Scalar::Util" => 0,
-    "base" => 0,
+    "parent" => 0,
     "strict" => 0,
     "warnings" => 0
   },

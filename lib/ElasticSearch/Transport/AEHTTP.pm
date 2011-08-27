@@ -3,14 +3,14 @@ package ElasticSearch::Transport::AEHTTP;
 use strict;
 use warnings;
 
-use base 'ElasticSearch::Transport';
+use ElasticSearch 0.44 ();
+use parent 'ElasticSearch::Transport';
 use AnyEvent::HTTP qw(http_request);
 use Encode qw(decode_utf8 encode_utf8);
-use ElasticSearch 0.41 ();
 use ElasticSearch::Util qw(build_error);
-use Scalar::Util qw(weaken refaddr);
+use Scalar::Util qw(weaken isweak);
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 #===================================
 sub protocol     {'http'}
@@ -92,7 +92,12 @@ sub _send_request {
 
     my $request_cb = sub {
         my ( $content, $hdr ) = @_;
-        $content = defined $content ? decode_utf8($content) : '';
+
+        $content = '' unless defined $content;
+        $content = $self->inflate($content)
+            if ( $hdr->{'content-encoding'} || '' ) eq 'deflate';
+
+        $content = decode_utf8($content);
         my $code = $hdr->{Status};
 
         if ( $code =~ /^2/ ) {
@@ -121,11 +126,16 @@ sub _send_request {
         $cb->( undef, $error );
     };
 
+    my $headers;
+    $headers = { 'Accept-Encoding' => 'deflate' }
+        if $self->deflate;
+
     return http_request(
         $method    => $uri,
         body       => $data,
         timeout    => $self->timeout,
         persistent => 0,
+        headers    => $headers,
         $request_cb
     );
 }
@@ -141,6 +151,7 @@ sub _refresh_servers {
     weaken $queue->[-1];
 
     my $requests = $self->{_requests} ||= [];
+    weaken $self->{_requests} unless isweak $self->{_requests};
     @$requests = () unless grep $_, @$requests;
     return ( @$requests, $cb ) if ( grep $_, @$queue ) > 1;
 
@@ -204,7 +215,7 @@ sub _refresh_servers {
     }
 
     my @requests = @$requests;
-    weaken $requests->[$_] for 0 .. @requests;
+    weaken $requests->[$_] for 0 .. $#requests;
 
     return ( @$requests, $cb );
 }
@@ -351,7 +362,7 @@ sub recv {
 sub DESTROY {
 #===================================
     my $self = shift;
-    if ($ElasticSearch::DEBUG) {
+    if ( $ElasticSearch::DEBUG && $self->{_line} ) {
         print "Destroyed: " . $self->{_line} . "\n";
         delete $CV{ $self->{_line} };
         $destroyed++;
@@ -378,7 +389,7 @@ ElasticSearch::Transport::AEHTTP - AnyEvent::HTTP backend for ElasticSearch
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 SYNOPSIS
 
@@ -489,6 +500,8 @@ be executed synchronously.
 =item * L<ElasticSearch::Transport::Curl>
 
 =item * L<ElasticSearch::Transport::AEHTTP>
+
+=item * L<ElasticSearch::Transport::AECurl>
 
 =item * L<ElasticSearch::Transport::Thrift>
 
