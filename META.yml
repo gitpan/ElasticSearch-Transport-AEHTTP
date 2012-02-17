@@ -3,10 +3,9 @@ abstract: 'AnyEvent::HTTP backend for ElasticSearch'
 author:
   - 'Clinton Gormley <drtech@cpan.org>'
 build_requires:
-  Module::Build: 0.3601
   Test::More: 0
 configure_requires:
-  Module::Build: 0.3601
+  ExtUtils::MakeMaker: 6.30
 dynamic_config: 0
 generated_by: 'Dist::Zilla version 4.300000, CPAN::Meta::Converter version 2.110930'
 license: perl
@@ -17,7 +16,7 @@ name: ElasticSearch-Transport-AEHTTP
 requires:
   AnyEvent: 0
   AnyEvent::HTTP: 0
-  ElasticSearch: 0.44
+  ElasticSearch: 0.48
   ElasticSearch::Transport: 0
   ElasticSearch::Util: 0
   Encode: 0
@@ -29,4 +28,4 @@ resources:
   bugtracker: https://github.com/clintongormley/ElasticSearch-AEHTTP/issues
   homepage: https://metacpan.org/module/ElasticSearch
   repository: git://github.com/clintongormley/ElasticSearch-AEHTTP.git
-version: 0.02
+version: 0.03

@@ -3,14 +3,14 @@ package ElasticSearch::Transport::AEHTTP;
 use strict;
 use warnings;
 
-use ElasticSearch 0.44 ();
+use ElasticSearch 0.48 ();
 use parent 'ElasticSearch::Transport';
 use AnyEvent::HTTP qw(http_request);
 use Encode qw(decode_utf8 encode_utf8);
 use ElasticSearch::Util qw(build_error);
 use Scalar::Util qw(weaken isweak);
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 #===================================
 sub protocol     {'http'}
@@ -50,7 +50,7 @@ sub _request {
             sub {
                 my $json = shift || '{"ok": true}';
                 if ( my $error = shift ) {
-                    if ( !$s_srvr && $self->_should_retry( $srvr, $error ) ) {
+                    if ( !$s_srvr && $self->should_retry( $srvr, $error ) ) {
                         my @guard;
                         my $next_cb = sub { $weak_req->(@_); @guard = () };
                         return @guard = $self->_next_server($next_cb);
@@ -105,13 +105,13 @@ sub _send_request {
         }
         my $msg = $hdr->{Reason};
 
-        my $type
-            = $code eq '409'                  ? 'Conflict'
-            : $code eq '404'                  ? 'Missing'
-            : $msg  eq 'Connection timed out' ? 'Timeout'
+        my $type = $self->code_to_error($code)
+            || (
+              $msg eq 'Connection timed out' ? 'Timeout'
             : $msg =~ /Broken pipe|Connection (reset by peer|refused)/
             ? 'Connection'
-            : 'Request';
+            : 'Request'
+            );
 
         my $error_params = {
             server      => $server,
@@ -389,7 +389,7 @@ ElasticSearch::Transport::AEHTTP - AnyEvent::HTTP backend for ElasticSearch
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 
@@ -515,7 +515,7 @@ Clinton Gormley <drtech@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Clinton Gormley.
+This software is copyright (c) 2012 by Clinton Gormley.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
