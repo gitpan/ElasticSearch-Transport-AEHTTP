@@ -3,14 +3,14 @@ package ElasticSearch::Transport::AEHTTP;
 use strict;
 use warnings;
 
-use ElasticSearch 0.48 ();
+use ElasticSearch 0.50 ();
 use parent 'ElasticSearch::Transport';
 use AnyEvent::HTTP qw(http_request);
 use Encode qw(decode_utf8 encode_utf8);
 use ElasticSearch::Util qw(build_error);
 use Scalar::Util qw(weaken isweak);
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 #===================================
 sub protocol     {'http'}
@@ -23,6 +23,7 @@ sub send_request    { shift->_cv_wrap( '_send_request',    @_ ) }
 sub current_server  { shift->_cv_wrap( '_current_server',  @_ ) }
 sub next_server     { shift->_cv_wrap( '_next_server',     @_ ) }
 sub refresh_servers { shift->_cv_wrap( '_refresh_servers', @_ ) }
+sub skip_request    { shift->_cv_wrap( '_skip_request',    @_ ) }
 #===================================
 
 #===================================
@@ -138,6 +139,14 @@ sub _send_request {
         headers    => $headers,
         $request_cb
     );
+}
+
+#===================================
+sub _skip_request {
+#===================================
+    my $self = shift;
+    my $cb   = pop;
+    $cb->( $self->SUPER::skip_request(@_) );
 }
 
 #===================================
@@ -389,7 +398,7 @@ ElasticSearch::Transport::AEHTTP - AnyEvent::HTTP backend for ElasticSearch
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 SYNOPSIS
 

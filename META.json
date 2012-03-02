@@ -23,7 +23,7 @@
          "requires" : {
             "AnyEvent" : 0,
             "AnyEvent::HTTP" : 0,
-            "ElasticSearch" : "0.48",
+            "ElasticSearch" : "0.50",
             "ElasticSearch::Transport" : 0,
             "ElasticSearch::Util" : 0,
             "Encode" : 0,
@@ -51,6 +51,6 @@
          "web" : "https://github.com/clintongormley/ElasticSearch-AEHTTP"
       }
    },
-   "version" : "0.03"
+   "version" : "0.04"
 }
 
