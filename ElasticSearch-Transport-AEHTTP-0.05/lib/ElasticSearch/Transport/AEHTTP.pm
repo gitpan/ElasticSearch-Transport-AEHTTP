@@ -3,14 +3,15 @@ package ElasticSearch::Transport::AEHTTP;
 use strict;
 use warnings;
 
-use ElasticSearch 0.50 ();
+use ElasticSearch 0.60 ();
 use parent 'ElasticSearch::Transport';
 use AnyEvent::HTTP qw(http_request);
 use Encode qw(decode_utf8 encode_utf8);
 use ElasticSearch::Util qw(build_error);
 use Scalar::Util qw(weaken isweak);
+use List::Util qw(shuffle min);
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 #===================================
 sub protocol     {'http'}
@@ -89,7 +90,11 @@ sub _send_request {
     my $uri = $self->http_uri( $server, $params->{cmd}, $params->{qs} );
 
     my $data = $params->{data};
-    $data = encode_utf8($data) if defined $data;
+    if ( defined $data ) {
+        $data = encode_utf8($data);
+        eval { $self->check_content_length( \$data ); 1 }
+            or $cb->( undef, $@ );
+    }
 
     my $request_cb = sub {
         my ( $content, $hdr ) = @_;
@@ -210,16 +215,24 @@ sub _refresh_servers {
             )
         ) unless @servers;
 
+        if ( $protocol eq 'http' ) {
+            my $content_length = min( $self->max_content_length,
+                grep {$_} map { $_->{http}{max_content_length_in_bytes} }
+                    values %{ $nodes->{nodes} } );
+            $self->max_content_length($content_length);
+        }
+        @servers = shuffle @servers;
         $self->servers( \@servers );
         $self->{_refresh_in} = $self->max_requests - 1;
         %servers = ();
-        return $process_queue->(1);
+        return $process_queue->( \@servers );
     };
 
     foreach my $server (@all_servers) {
         next unless $server;
         push @$requests,
-            $self->_request( { cmd => '/_cluster/nodes' },
+            $self->_request(
+            { cmd => '/_cluster/nodes', qs => { http => 1 } },
             $server, $request_cb );
     }
 
@@ -340,6 +353,7 @@ sub guard {
 
 #===================================
 sub clear_guard { shift->{_guard} = []; }
+sub clear_cv { delete shift->{_ae_cv} }
 #===================================
 
 #===================================
@@ -349,12 +363,13 @@ sub cb {
     return $self->SUPER::cb unless @_;
 
     my $cb = shift;
-    my $cv = $self;
-
+    my $weak_cv = my $cv = $self;
+    Scalar::Util::weaken $weak_cv;
+    $self->guard($cv);
     $self->SUPER::cb(
         sub {
-            local $@ = $cv->{_ae_croak};
-            $cb->( @{ $cv->{_ae_sent} } );
+            local $@ = $weak_cv->{_ae_croak};
+            $cb->( @{ $weak_cv->{_ae_sent} } );
         }
     );
 }
@@ -398,7 +413,7 @@ ElasticSearch::Transport::AEHTTP - AnyEvent::HTTP backend for ElasticSearch
 
 =head1 VERSION
 
-version 0.04
+version 0.05
 
 =head1 SYNOPSIS
 

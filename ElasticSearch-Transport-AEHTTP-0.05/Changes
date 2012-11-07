@@ -1,5 +1,10 @@
 Revision history for ElasticSearch-Transport-AEHTTP
 
+0.05    2012-11-07
+        Added a max_content_length attribute to ElasticSearch::Transport
+        to avoid posting too large a body to elasticsearch. The value
+        is auto-detected in versions 0.19.12 onwards
+
 0.04    2012-03-02
         Added skip_request to make short circuits work in bulk/mget/msearch
 

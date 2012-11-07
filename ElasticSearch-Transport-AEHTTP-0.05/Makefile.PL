@@ -12,7 +12,10 @@ my %WriteMakefileArgs = (
   "ABSTRACT" => "AnyEvent::HTTP backend for ElasticSearch",
   "AUTHOR" => "Clinton Gormley <drtech\@cpan.org>",
   "BUILD_REQUIRES" => {
-    "Test::More" => 0
+    "ElasticSearch::SearchBuilder" => 0,
+    "Test::Differences" => 0,
+    "Test::Exception" => 0,
+    "Test::More" => "0.96"
   },
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => "6.30"
@@ -24,16 +27,17 @@ my %WriteMakefileArgs = (
   "PREREQ_PM" => {
     "AnyEvent" => 0,
     "AnyEvent::HTTP" => 0,
-    "ElasticSearch" => "0.50",
+    "ElasticSearch" => "0.60",
     "ElasticSearch::Transport" => 0,
     "ElasticSearch::Util" => 0,
     "Encode" => 0,
+    "List::Util" => 0,
     "Scalar::Util" => 0,
     "parent" => 0,
     "strict" => 0,
     "warnings" => 0
   },
-  "VERSION" => "0.04",
+  "VERSION" => "0.05",
   "test" => {
     "TESTS" => "t/*.t"
   }
