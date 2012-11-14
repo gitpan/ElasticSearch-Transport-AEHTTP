@@ -11,7 +11,7 @@ use ElasticSearch::Util qw(build_error);
 use Scalar::Util qw(weaken isweak);
 use List::Util qw(shuffle min);
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 #===================================
 sub protocol     {'http'}
@@ -413,7 +413,7 @@ ElasticSearch::Transport::AEHTTP - AnyEvent::HTTP backend for ElasticSearch
 
 =head1 VERSION
 
-version 0.05
+version 0.06
 
 =head1 SYNOPSIS
 

@@ -161,6 +161,21 @@ SKIP: {
         ]
         },
         , 'aliases filterb';
-}    # SKIP
+
+    # EMPTY
+    ok !defined $em->search( queryb => {} )->{query}, 'search-queryb-empty';
+
+    ok !defined $em->search( filterb => {} )->{filter},
+        'search-filterb-empty';
+
+    eq_or_diff $em->search( queryb => { -all => 1, -filter => {} } )->{query},
+        { match_all => {} }, 'search-queryb-filterb-empty';
+
+    eq_or_diff $em->search( facets =>
+            { foo => { terms => { field => 'foo' }, facet_filterb => {} } } )
+        ->{facets},
+        { foo => { terms => { field => 'foo' } } }, 'facet-filterb';
+
+}
 
 1

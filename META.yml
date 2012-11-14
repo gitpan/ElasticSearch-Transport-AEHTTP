@@ -32,4 +32,4 @@ resources:
   bugtracker: https://github.com/clintongormley/ElasticSearch-AEHTTP/issues
   homepage: https://metacpan.org/module/ElasticSearch
   repository: git://github.com/clintongormley/ElasticSearch-AEHTTP.git
-version: 0.05
+version: 0.06

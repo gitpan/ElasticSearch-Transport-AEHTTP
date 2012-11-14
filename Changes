@@ -1,5 +1,8 @@
 Revision history for ElasticSearch-Transport-AEHTTP
 
+0.06    2012-11-14
+        Archive was not being built correctly - copied ES test into this repo.
+
 0.05    2012-11-07
         Added a max_content_length attribute to ElasticSearch::Transport
         to avoid posting too large a body to elasticsearch. The value
